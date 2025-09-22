@@ -4,7 +4,7 @@ set -euo pipefail
 # =====================================================
 # Docker版本：一键搭建 sing-box anytls 服务（自签证书）
 # - 使用 Docker 容器化部署
-# - 端口使用 2083
+# - 端口使用 2053
 # - 自动生成自签证书和UUID
 # =====================================================
 
@@ -14,10 +14,10 @@ CERT="${WORKDIR}/cert.pem"
 KEY="${WORKDIR}/private.key"
 UUID_FILE="${WORKDIR}/uuid.txt"
 CONTAINER_NAME="${CONTAINER_NAME:-sing-box-anytls}"
-CN="${CN:-learn.microsoft.com}"    # 默认 CN（示例域名）
+CN="${CN:-www.w3schools.com}"    # 默认 CN（示例域名）
 DAYS="${DAYS:-365}"
-HOST_PORT="${HOST_PORT:-2083}"
-LISTEN_PORT="${LISTEN_PORT:-2083}"
+HOST_PORT="${HOST_PORT:-2053}"
+LISTEN_PORT="${LISTEN_PORT:-2053}"
 IMAGE="${IMAGE:-ghcr.io/sagernet/sing-box:latest}"
 
 # 获取公网IPv4地址
@@ -82,6 +82,22 @@ check_requirements() {
     exit 1
   fi
 }
+
+# 显示脚本信息和确认提示
+echo ""
+echo "即将通过"
+echo "@https://raw.githubusercontent.com/alexallen1/sing-box-suger/refs/heads/main/sugerbox-anytls.sh"
+echo ""
+echo "下载sing-box的docker版并搭建anytls服务端，"
+echo "配置文件保存在：${WORKDIR}"
+echo ""
+echo "按回车继续，输入n取消"
+read -r user_input
+
+if [[ "${user_input,,}" == "n" ]]; then
+    echo "操作已取消。"
+    exit 0
+fi
 
 echo "检查 Docker 环境..."
 check_requirements
@@ -196,4 +212,5 @@ echo "  端口：${HOST_PORT}"
 echo "  密码：${USER_UUID}"
 echo "─────────────────────────────────────────────────────────────"
 echo "  💡 配置文件保存在：${WORKDIR}"
+echo "  💡 删除服务：docker rm -f ${CONTAINER_NAME}"
 echo "─────────────────────────────────────────────────────────────"
